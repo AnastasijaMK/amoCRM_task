@@ -1,0 +1,41 @@
+* {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    margin:  0 auto;
+    max-width: 1200px;
+    padding: 0 20px;
+}
+
+h1 {
+    margin-block: 30px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #c5c5c5;
+}
+
+thead {
+    border-bottom: 1px solid #c5c5c5;
+}
+
+tr:not(:last-child) {
+    border-bottom: 1px solid #c5c5c5;
+}
+
+th,
+td {
+    border-right: 1px solid #c5c5c5;
+    padding: 10px;
+    text-align: center;
+}
+
+th:last-child,
+td:last-child {
+    border-right: 0;
+}
