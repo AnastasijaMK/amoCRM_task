@@ -22,7 +22,7 @@ xhr.send();
 // 4. Этот код сработает после того, как мы получим ответ сервера
 xhr.onload = function() {
     if (xhr.status == 200) {
-        console.log(response);
+        console.log(xhr.response);
     }
 };
 
