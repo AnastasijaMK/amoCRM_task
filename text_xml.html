@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои сделки</title>
+</head>
+<body>
+<div class="container">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 90%;
+            margin: auto;
+        }
+
+        #dealsTable {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            background-color: #ededed;
+            padding: 10px;
+            text-align: left;
+        }
+
+        tbody td {
+            padding: 5px 10px;
+        }
+
+        .loader {
+            display: none;
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 2em;
+            z-index: 100;
+        }
+
+        .loader::before {
+            content: 'Загрузка...';
+        }
+
+        .card-item {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .card-item:hover {
+            opacity: 70%;
+        }
+
+        .close-button {
+            float: right;
+            cursor: pointer;
+        }
+
+        .svg-status {
+            fill: currentColor;
+            height: 1rem;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        .error {
+            color: red;
+        }
+    </style>
+    <!-- Таблица со сделками -->
+    <table id="dealsTable">
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const apiUrl = 'https://anastasijank.amocrm.ru/api/v4/leads'; // замените на реальный URL
+        let lastDealId = null;
+        let intervalHandle = null;
+        let expandedCard = null;
+
+        const bearerToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImQwOWFjOTg1OTVlNjRhOGM4MTg0ZmFiZTVkNzM5YzU4ZTY4YmNhNzI5Mjc5NzM0MGRlYmZlN2VkZGZlNmE2MzA1Y2Y4ZmE3YzM3MWViZDJmIn0.eyJhdWQiOiIzOTIwOGQzMS0wZjA5LTRlYzAtYTI4Yi01NWNmZmVjMDJmYzEiLCJqdGkiOiJkMDlhYzk4NTk1ZTY0YThjODE4NGZhYmU1ZDczOWM1OGU2OGJjYTcyOTI3OTczNDBkZWJmZTdlZGRmZTZhNjMwNWNmOGZhN2MzNzFlYmQyZiIsImlhdCI6MTcyNzI1NjYxOSwibmJmIjoxNzI3MjU2NjE5LCJleHAiOjE3MjczNDMwMTksInN1YiI6IjExNTY1MjQyIiwiZ3JhbnRfdHlwZSI6IiIsImFjY291bnRfaWQiOjMxOTcxMDU4LCJiYXNlX2RvbWFpbiI6ImFtb2NybS5ydSIsInZlcnNpb24iOjIsInNjb3BlcyI6WyJwdXNoX25vdGlmaWNhdGlvbnMiLCJmaWxlcyIsImNybSIsImZpbGVzX2RlbGV0ZSIsIm5vdGlmaWNhdGlvbnMiXSwiaGFzaF91dWlkIjoiYTI2NGRkM2MtZmNjNy00ODlhLWIzNDUtNzJmNjZiYWNlMmU5IiwiYXBpX2RvbWFpbiI6ImFwaS1iLmFtb2NybS5ydSJ9.WIYkpwRRpIEMKJ_cxJjJ2GeG3zCNjoFanvJ-94VtS-DZC0DHwTAObkMRuTjVs91i_zRVfGO2kZPU2vlP-koardPGKgw4FtbrkoUSzfqipEkTKqmQ6VP-u5acvaRoJxAM5acd50dg0sRWjlen5uJ_kTURNM62kdixNBq2-w2SR1goPe1hc5LGwzfNSRqJjDHkOEN5ev9iMJAnUa_LIlL-0Iq2RDL5aiUeefFOU4hyfnhgi3w2VmFkGcTFsNpTHTNkdYfGDEBFMXYG_G_vanWFsDYIzIJ2gqg1aZsMh9mnDs6iISVnwvMdaTJk-e1mgAAg0ivSbbCG3nHvprUvdVk35g";
+
+        fetchCards();
+
+        document.getElementById('dealsTable').addEventListener('click', event => {
+            if (!expandedCard && event.target.classList.contains('card-item')) {
+                showLoader(event.target);
+            } else if (expandedCard !== null) {
+                hideExpandedCard();
+            }
+            expandedCard = event.target;
+            fetchDetails(lastDealId || event.target.id);
+        });
+
+        function fetchCards() {
+            clearInterval(intervalHandle);
+            lastDealId = null;
+            expandCard(null);
+            intervalHandle = setInterval(fetchCardsInBatches, 1000);
+        }
+
+        function fetchCardsInBatches() {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', `${apiUrl}?limit=3&offset=${lastDealId ? lastDealId + 1 : undefined}`);
+            xhr.setRequestHeader("Authorization", `Bearer ${bearerToken}`);
+            xhr.send();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var responseData = JSON.parse(xhr.responseText);
+                    appendCardsToTable(responseData);
+                    console.log('responseData=',responseData._embedded.leads);
+                    console.log('responseData=',responseData._embedded.leads.length);
+                    console.log('responseData=',responseData._embedded.leads.length);
+                    console.log('responseData=',responseData._embedded.leads[responseData._embedded.leads.length - 1].id);
+                    lastDealId = responseData._embedded.leads[responseData._embedded.leads.length - 1].id;
+                }
+            };
+        }
+
+        function appendCardsToTable(cards) {
+            const cardsInfo = cards._embedded.leads;
+            cardsInfo.forEach(card => {
+                let cardRow = `<tr class="card-item" id="${card.id}"><td>${card.id}</td><td>${card.name}</td><td>${card.price}</td></tr>`;
+                document.querySelector('#dealsTable tbody').insertAdjacentHTML('beforeend', cardRow);
+            });
+        }
+
+        function expandCard(cardElement) {
+            // Hide any previously expanded card details
+            if (expandedCard) {
+                expandedCard.style.display = 'none';
+            }
+
+            // Show the newly selected card details or loader if needed
+            if (cardElement) {
+                cardElement.style.display = 'block';
+                expandedCard = cardElement;
+            } else {
+                expandedCard = null;
+            }
+        }
+
+        function fetchDetails(dealId) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', `${apiUrl}/${dealId}`);
+            xhr.send();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var dealDetails = JSON.parse(xhr.responseText);
+                    updateCard(dealDetails);
+                }
+            };
+        }
+
+        function updateCard(details) {
+            var cardElement = document.getElementById(details.id);
+            cardElement.innerHTML = '';
+            cardElement.appendChild(createDetailRow(details));
+            cardElement.appendChild(createCloseButton());
+            cardElement.style.display = 'block';
+        }
+
+        function createDetailRow(details) {
+            var row = document.createElement('tr');
+            row.className = 'detail-row';
+            row.innerHTML = `<td>${details.name}</td><td>${details.budget}</td><td>${formatDate(details.date)}</td><td><svg class="svg-status" style="background-color: ${getStatusColor(details.taskStatus)}"></svg></td>`;
+            return row;
+        }
+
+        function formatDate(dateString) {
+            var dateParts = dateString.split('.');
+            return `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+        }
+
+        function getStatusColor(status) {
+            switch (status) {
+                case 'overdue':
+                case 'today':
+                    return 'green';
+                case 'tomorrow':
+                    return 'yellow';
+                default:
+                    return 'red';
+            }
+        }
+
+        function createCloseButton() {
+            var closeButton = document.createElement('span');
+            closeButton.className = 'close-button';
+            closeButton.textContent = 'X';
+            closeButton.addEventListener('click', () => {
+                hideExpandedCard();
+            });
+            return closeButton;
+        }
+
+        function showLoader(element) {
+            element.parentNode.style.display = 'none';
+            var loader = document.createElement('tr');
+            loader.className = 'loader';
+            loader.innerHTML = '<td colspan="4">Загрузка...</td>';
+            element.parentNode.insertBefore(loader, element);
+        }
+
+        function hideExpandedCard() {
+            if (expandedCard) {
+                expandedCard.style.display = 'none';
+                expandedCard = null;
+            }
+        }
+    });
+</script>
+</body>
+</html>

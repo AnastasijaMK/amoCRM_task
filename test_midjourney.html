@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сделки AmoCRM</title>
+</head>
+<body>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .spinner {
+        border: 4px solid rgba(0, 0, 0, 0.1);
+        border-left-color: #000;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .status {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+</style>
+<h1>Сделки AmoCRM</h1>
+<table id="leadsTable">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Название</th>
+        <th>Бюджет</th>
+    </tr>
+    </thead>
+    <tbody id="leadsBody"></tbody>
+</table>
+
+<script>
+    const apiUrl = 'https://anastasijank.amocrm.ru/api/v4/leads';
+    const leadsBody = document.getElementById('leadsBody');
+    let currentLeadIndex = 0;
+
+    fetchLeads();
+
+    function fetchLeads() {
+        const xhr = new XMLHttpRequest();
+
+        xhr.open('GET', apiUrl);
+        xhr.setRequestHeader('Authorization', 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImQwOWFjOTg1OTVlNjRhOGM4MTg0ZmFiZTVkNzM5YzU4ZTY4YmNhNzI5Mjc5NzM0MGRlYmZlN2VkZGZlNmE2MzA1Y2Y4ZmE3YzM3MWViZDJmIn0.eyJhdWQiOiIzOTIwOGQzMS0wZjA5LTRlYzAtYTI4Yi01NWNmZmVjMDJmYzEiLCJqdGkiOiJkMDlhYzk4NTk1ZTY0YThjODE4NGZhYmU1ZDczOWM1OGU2OGJjYTcyOTI3OTczNDBkZWJmZTdlZGRmZTZhNjMwNWNmOGZhN2MzNzFlYmQyZiIsImlhdCI6MTcyNzI1NjYxOSwibmJmIjoxNzI3MjU2NjE5LCJleHAiOjE3MjczNDMwMTksInN1YiI6IjExNTY1MjQyIiwiZ3JhbnRfdHlwZSI6IiIsImFjY291bnRfaWQiOjMxOTcxMDU4LCJiYXNlX2RvbWFpbiI6ImFtb2NybS5ydSIsInZlcnNpb24iOjIsInNjb3BlcyI6WyJwdXNoX25vdGlmaWNhdGlvbnMiLCJmaWxlcyIsImNybSIsImZpbGVzX2RlbGV0ZSIsIm5vdGlmaWNhdGlvbnMiXSwiaGFzaF91dWlkIjoiYTI2NGRkM2MtZmNjNy00ODlhLWIzNDUtNzJmNjZiYWNlMmU5IiwiYXBpX2RvbWFpbiI6ImFwaS1iLmFtb2NybS5ydSJ9.WIYkpwRRpIEMKJ_cxJjJ2GeG3zCNjoFanvJ-94VtS-DZC0DHwTAObkMRuTjVs91i_zRVfGO2kZPU2vlP-koardPGKgw4FtbrkoUSzfqipEkTKqmQ6VP-u5acvaRoJxAM5acd50dg0sRWjlen5uJ_kTURNM62kdixNBq2-w2SR1goPe1hc5LGwzfNSRqJjDHkOEN5ev9iMJAnUa_LIlL-0Iq2RDL5aiUeefFOU4hyfnhgi3w2VmFkGcTFsNpTHTNkdYfGDEBFMXYG_G_vanWFsDYIzIJ2gqg1aZsMh9mnDs6iISVnwvMdaTJk-e1mgAAg0ivSbbCG3nHvprUvdVk35g'); // Замените на ваш токен
+        xhr.onload = function() {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                const leads = JSON.parse(xhr.responseText)._embedded.leads;
+                displayLeads(leads);
+            } else {
+                console.error('Ошибка при получении данных:', xhr.statusText);
+            }
+        };
+
+        xhr.onerror = function() {
+            console.error('Ошибка сети');
+        };
+
+        xhr.send();
+    }
+
+    function displayLeads(leads) {
+        const interval = setInterval(() => {
+            if (currentLeadIndex >= leads.length) {
+                clearInterval(interval);
+                return;
+            }
+
+            const lead = leads[currentLeadIndex];
+            const row = document.createElement('tr');
+
+            row.innerHTML =
+                `<td>${lead.id}</td>
+            <td class="lead-name">${lead.name}</td>
+            <td>${lead.price}</td>`;
+
+            leadsBody.appendChild(row);
+            currentLeadIndex++;
+
+            if (currentLeadIndex % 3 === 0) {
+                // Задержка в 1 секунду после каждых трех запросов
+                clearInterval(interval);
+                setTimeout(() => fetchLeads(), 1000);
+            }
+        }, 100);
+    }
+</script>
+</body>
+</html>
