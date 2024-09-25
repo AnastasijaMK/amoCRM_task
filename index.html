@@ -8,7 +8,6 @@
     <title>Таблица со сделками</title>
 
     <link rel="stylesheet" href="index.css">
-    <script src="index.js"></script>
 </head>
 <body>
     <div class="container">
@@ -23,6 +22,29 @@
             </thead>
             <tbody></tbody>
         </table>
+
+        <div class="popup_shadow"></div>
+        <div class="popup">
+            <div class="popup__head">
+                <p class="popup__title">
+                    Информация по сделке
+                </p>
+                <button class="popup__close j-close-popup">
+                    <svg width="32" height="32" viewBox="0 0 32 32">
+                        <rect width="25.9767" height="1.73178" rx="0.865891" transform="matrix(0.696455 -0.7176 0.696455 0.7176 6.61719 24.6406)"/>
+                        <rect width="25.9767" height="1.73178" rx="0.865891" transform="matrix(0.696455 -0.7176 0.696455 0.7176 6.70312 24.7568)"/>
+                        <rect width="25.9767" height="1.73178" rx="0.865891" transform="matrix(0.696455 0.7176 -0.696455 0.7176 7.20312 6.02441)"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="popup__body">
+                <div class="popup__button">
+                    <button class="popup__close j-close-popup">Закрыть</button>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <script src="index.js"></script>
 </body>
 </html>

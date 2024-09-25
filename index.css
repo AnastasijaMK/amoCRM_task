@@ -22,6 +22,12 @@ table {
 
 thead {
     border-bottom: 1px solid #c5c5c5;
+    background: #6eb7ff;
+}
+
+tbody tr {
+    cursor: pointer;
+    transition: background-color 0.3s ease-out;
 }
 
 tr:not(:last-child) {
@@ -35,7 +41,135 @@ td {
     text-align: center;
 }
 
+th {
+    color: #fff;
+}
+
 th:last-child,
 td:last-child {
     border-right: 0;
+}
+
+.popup_shadow {
+    display: block;
+    background: rgba(16, 30, 34, 0.5);
+    overflow: hidden;
+    width: 100vw;
+    height: 100dvh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -10;
+    opacity: 0;
+    transition: opacity 0.3s linear, z-index 0s linear 0.3s;
+}
+
+.popup_shadow--active {
+    z-index: 2;
+    opacity: 1;
+    transition: opacity 0.3s linear;
+}
+
+.popup {
+    box-shadow: -2px 2px 4px 0 rgba(0, 0, 0, 0.25), -8px 12px 24px 2px rgba(187, 187, 187, 0.25);
+    background: #FFF;
+    position: fixed;
+    z-index: 2;
+    top: -100%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 640px;
+    max-width: calc(100vw - 80px);
+    max-height: calc(100dvh - 80px);
+    transition: top 0.5s ease-out;
+    padding: 20px;
+    overflow: scroll;
+}
+
+.popup::-webkit-scrollbar {
+    display: none;
+}
+
+.popup::-webkit-scrollbar-track {
+    display: none;
+}
+
+.popup::-webkit-scrollbar-thumb {
+    display: none;
+}
+
+.popup--active {
+    top: 50%;
+}
+
+.popup__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 50px;
+    border-bottom: 1px solid #c5c5c5;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.popup__close {
+    background: transparent;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+}
+
+.popup__close svg {
+    fill: #6eb7ff;
+}
+
+.popup__title {
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 26px;
+}
+
+.popup__button button {
+    padding: 10px 15px;
+    background: #6eb7ff;
+    color: #FFF;
+    font-weight: 600;
+    transition: opacity 0.3s ease-out;
+}
+
+.popup__info {
+    margin-bottom: 20px;
+}
+
+.popup__row {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.popup__subtitle {
+    color: #9c9b9b;
+}
+
+.popup__row--status svg {
+    fill: red;
+}
+
+.popup__row--status-current svg {
+    fill: green;
+}
+
+.popup__row--status-future svg {
+    fill: yellow;
+}
+
+@media (min-width: 1200px) {
+    tr:has(td:hover) {
+        background-color: #e6f2ff;
+    }
+
+    .popup__button button:hover {
+        opacity: 0.8;
+    }
 }
