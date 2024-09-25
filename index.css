@@ -12,12 +12,33 @@
 
 h1 {
     margin-block: 30px;
+    text-align: center;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     border: 1px solid #c5c5c5;
+}
+
+.table_loading {
+    display: none;
+}
+
+table + .loader {
+    display: none;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto;
+}
+
+table + .loader:after {
+    width: 48px;
+    height: 48px;
+}
+
+.table_loading + .loader {
+    display: block;
 }
 
 thead {
@@ -162,6 +183,46 @@ td:last-child {
 
 .popup__row--status-future svg {
     fill: yellow;
+}
+
+.loader_wrap,
+.info-loading td {
+    display: none;
+}
+
+.info-loading .loader_wrap {
+    display: table-cell;
+}
+
+.loader {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: inline-block;
+    border-top: 4px solid #c5c5c5;
+    border-right: 4px solid transparent;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+}
+.loader::after {
+    content: '';
+    box-sizing: border-box;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border-bottom: 4px solid #6eb7ff;
+    border-left: 4px solid transparent;
+}
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 @media (min-width: 1200px) {

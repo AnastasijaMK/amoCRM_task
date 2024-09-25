@@ -12,16 +12,19 @@
 <body>
     <div class="container">
         <h1>Таблица со сделками</h1>
-        <table id="lead_table">
-            <thead>
-            <tr>
-                <th>id</th>
-                <th>Название</th>
-                <th>Бюджет</th>
-            </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        <div class="table_wrap">
+            <table class="table_loading" id="lead_table">
+                <thead>
+                <tr>
+                    <th>id</th>
+                    <th>Название</th>
+                    <th>Бюджет</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <span class="loader"></span>
+        </div>
 
         <div class="popup_shadow"></div>
         <div class="popup">

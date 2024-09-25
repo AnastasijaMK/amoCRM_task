@@ -41,18 +41,21 @@ xhr.onload = function() {
             const leadRow = document.createElement('tr');
             leadRow.innerHTML = '<td>' + lead.id + '</td>' +
                 '<td>' + lead.name + '</td>' +
-                '<td>' + lead.price.toLocaleString() + '</td>';
+                '<td>' + lead.price.toLocaleString() + '</td>' +
+                '<td colspan="3" class="loader_wrap"><span class="loader"></span></td>';
             leadRow.setAttribute('data-id', lead.id);
             document.getElementById('lead_table').querySelector('tbody').append(leadRow);
 
             initClickOnLeadRow(leadRow);
         }
+        document.querySelector('.table_loading')?.classList.remove('table_loading');
     }
 };
 
 
 function initClickOnLeadRow(lead) {
     lead?.addEventListener('click',()=>{
+        lead.classList.add('info-loading');
         popup.querySelector('.popup__info')?.remove();
 
         let xhr = new XMLHttpRequest();
@@ -64,7 +67,6 @@ function initClickOnLeadRow(lead) {
             if (xhr.status == 200) {
                 popupShadow?.classList.add('popup_shadow--active');
                 popup?.classList.add('popup--active');
-                console.log(xhr.response);
 
                 const popupInfoWrap = document.createElement('div');
                 popupInfoWrap.className = 'popup__info';
@@ -98,6 +100,8 @@ function initClickOnLeadRow(lead) {
                 }
 
                 popup.querySelector('.popup__body').prepend(popupInfoWrap);
+
+                lead.classList.remove('info-loading');
             }
         };
     });
